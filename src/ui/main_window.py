@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QSystemTrayIcon
 from PySide6.QtGui import QIcon, QAction
 from PySide6.QtCore import QCoreApplication, Qt
 from src.ui.widgets.timer_widget import TimerWidget
+from src.ui.widgets.stats_widget import StatsWidget
 
 class FishodoroApp(QMainWindow):
     def __init__(self):
@@ -9,7 +10,7 @@ class FishodoroApp(QMainWindow):
         
         # Configure the window
         self.setWindowTitle("Fishodoro 🐟")
-        self.resize(550, 480)  # Slightly enlarged to accommodate tabs and lists
+        self.resize(550, 520)  # Sized beautifully for our content panels
         
         # --- Tab Widget Setup ---
         self.tabs = QTabWidget()
@@ -52,18 +53,30 @@ class FishodoroApp(QMainWindow):
         pond_layout.addWidget(pond_label)
         self.tabs.addTab(self.pond_placeholder, "🌊 My Pond")
         
-        # Tab 3: 📊 Statistics (Placeholder for now)
-        self.stats_placeholder = QWidget()
-        stats_layout = QVBoxLayout()
-        self.stats_placeholder.setLayout(stats_layout)
-        stats_label = QLabel("Statistics Logs 📊\nYour Fih-tribution heatmap will be shown here soon...")
-        stats_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        stats_label.setStyleSheet("font-size: 16px; color: #1F618D; font-family: 'Segoe UI', Arial; font-style: italic;")
-        stats_layout.addWidget(stats_label)
-        self.tabs.addTab(self.stats_placeholder, "📊 Stats")
+        # Tab 3: 📊 Statistics (Using our new StatsWidget)
+        self.stats_widget = StatsWidget()
+        self.tabs.addTab(self.stats_widget, "📊 Stats")
         
         # Basic background styling for the window itself
-        self.setStyleSheet("background-color: #D4E6F1;")
+        self.setStyleSheet("""
+            background-color: #D4E6F1;
+        """)
+        
+        # Style QToolTip globally for clear black text and beautiful light cozy background
+        QCoreApplication.instance().setStyleSheet("""
+            QToolTip {
+                background-color: #F8F9F9;
+                color: #2C3E50;
+                font-family: 'Segoe UI', Arial;
+                font-size: 12px;
+                border: 1px solid #2E86C1;
+                border-radius: 4px;
+                padding: 5px;
+            }
+        """)
+        
+        # Connect tab changes so that selecting the Stats tab automatically refreshes it
+        self.tabs.currentChanged.connect(self.on_tab_changed)
         
         # --- System Tray Icon ---
         self.tray_icon = QSystemTrayIcon(self)
@@ -95,5 +108,11 @@ class FishodoroApp(QMainWindow):
                 QSystemTrayIcon.MessageIcon.Information,
                 5000  # Notification duration (5 seconds)
             )
+
+    def on_tab_changed(self, index):
+        # If the user clicks on the Stats tab (index 2), automatically refresh it
+        if index == 2:
+            self.stats_widget.refresh_stats()
+
 
 
