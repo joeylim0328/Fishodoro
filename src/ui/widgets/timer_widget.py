@@ -1,17 +1,26 @@
+import logging
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton
 from PySide6.QtCore import Qt, QTimer
+from src.database import FihDatabase
+from src.core_logic import generate_random_fih
+from datetime import datetime
+
+logger = logging.getLogger("TimerWidget")
 
 class TimerWidget(QWidget):
     def __init__(self, main_window=None):
         super().__init__()
         
         self.main_window = main_window  # Reference to Main Window for notifications
+        self.db = FihDatabase()         # Initialize local storage database
         
         # Timer variables
         self.timer = QTimer()
         self.timer.timeout.connect(self.tick)
         self.total_seconds_left = 0
         self.is_focus_mode = True  # True if Focus, False if Break
+        self.focus_start_time = None
+        self.focus_end_time = None
         
         # Main layout
         layout = QVBoxLayout()
@@ -66,7 +75,7 @@ class TimerWidget(QWidget):
         break_title = QLabel("Break Time:")
         break_title.setStyleSheet("font-size: 11px; color: #1F618D; font-weight: bold; text-transform: uppercase;")
         self.break_combo = QComboBox()
-        # Generates options 1 Min, 3 Min, ..., 20 Min
+        # Generates options 1 Min, 2 Min, ..., 20 Min
         break_options = [f"{i} Min" for i in range(1, 21)]
         self.break_combo.addItems(break_options)
         self.break_combo.setCurrentIndex(3)  # Index 3 corresponds to "5 Min"
@@ -155,6 +164,8 @@ class TimerWidget(QWidget):
         focus_mins = int(self.focus_combo.currentText().split(" ")[0])
         self.total_seconds_left = focus_mins * 60
         self.is_focus_mode = True
+        self.focus_start_time = datetime.now().isoformat()
+        self.focus_end_time = None
         
         # Update UI states
         self.focus_combo.setEnabled(False)
@@ -171,8 +182,39 @@ class TimerWidget(QWidget):
 
     def claim_fih_and_start_break(self):
         # Triggered when the user clicks 'Pull in Line! 🎣💦' after a bite
+        logger.info("--- claim_fih_and_start_break triggered ---")
         self.pull_btn.setVisible(False)
         self.start_btn.setVisible(True)
+        
+        # 1. Determine total fih caught so far
+        total_caught = self.db.get_total_count()
+        logger.debug(f"Total fih in database before this catch: {total_caught}")
+        
+        # 2. Generate a random fih based on the 4th fih rules
+        new_fih = generate_random_fih(total_caught)
+        logger.debug(f"Generated new fih: {new_fih}")
+        
+        # 3. Save the new fih to the local JSON file with focus start & end times
+        saved_record = self.db.save_fih(
+            new_fih["emoji"], 
+            new_fih["name"], 
+            new_fih["is_special"],
+            focus_start=self.focus_start_time,
+            focus_end=self.focus_end_time
+        )
+        logger.info(f"Saved fih record to database: {saved_record}")
+        logger.debug(f"New database total count: {self.db.get_total_count()}")
+        
+        # 4. Notify the user with which fish they caught
+        celebration_msg = f"You reeled in a {new_fih['name']} {new_fih['emoji']}!"
+        if new_fih["is_special"]:
+            celebration_msg = f"✨ AMAZING! You caught a Special {new_fih['name']} {new_fih['emoji']}! ✨"
+            
+        if self.main_window:
+            self.main_window.show_notification("Fih Caught! 🎣🎒", celebration_msg)
+            
+        # Update status label with the caught fih for in-app gratification
+        self.status_label.setText(f"Caught: {new_fih['name']} {new_fih['emoji']}!\nNow starting break...")
         
         # Start break mode countdown
         self.start_break()
@@ -220,6 +262,9 @@ class TimerWidget(QWidget):
     def on_timer_complete(self):
         if self.is_focus_mode:
             # FOCUS TIMER FINISHED!
+            
+            self.focus_end_time = datetime.now().isoformat()
+            
             # Trigger OS notification
             if self.main_window:
                 self.main_window.show_notification(

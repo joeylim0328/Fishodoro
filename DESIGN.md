@@ -16,7 +16,7 @@ Fishodoro is a cozy, fish-themed desktop Pomodoro application written in Python 
 *   **The Reward:** Completing a focus session successfully reels in one random **fih** (fish).
 *   **The 4th Fih Rule:**
     *   **Fih 1, 2, 3 (Common):** Generates standard sea life (e.g., 🐟, 🐠, 🐡, 🦀).
-    *   **Fih 4 (Special/Legendary):** On every 4th consecutive or total completed session, you catch a legendary or rare aquatic creature (e.g., 🐙, 🦑, 🐬, 🐳, 🦈, or even 🧜‍♂️ / 👑).
+    *   **Fih 4 (Special/Legendary):** On every 4th consecutive or total completed session, you might catch a legendary or rare aquatic creature (e.g., 🐙, 🦑, 🐬, 🐳, 🦈, or even 🧜‍♂️ / 👑), or maybe a common sea life.
 *   **Logging & Timestamps:** Every caught fih is logged in a local history database with:
     *   The fih emoji (e.g., `🐠`)
     *   A funny personalized name (e.g., `"Derpy Fih"`, `"Glub Glub"`, `"Snooty Fih"`)
