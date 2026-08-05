@@ -30,9 +30,9 @@ def generate_random_fih(total_caught_count: int) -> dict:
     Generates a random fih based on the 4th fih rule.
     Returns a dictionary with 'emoji', 'name', and 'is_special'.
     """
-    # Rule: If this new caught fih makes the total count a multiple of 4, reward a special fih!
+    # Rule: Every 4th fih has a small chance to reward a rare special fih!
     current_fih_number = total_caught_count + 1
-    is_special = (current_fih_number % 4 == 0)
+    is_special = (current_fih_number % 4 == 0 and random.random() < 0.15)
     
     if is_special:
         fih_template = random.choice(SPECIAL_FIH)
