@@ -1,11 +1,47 @@
 import logging
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QMessageBox
 from PySide6.QtCore import Qt, QTimer
 from src.database import FihDatabase
 from src.core_logic import generate_random_fih
 from datetime import datetime
 
 logger = logging.getLogger("TimerWidget")
+
+BTN_STYLE_NORMAL = """
+    QPushButton {
+        background-color: #2E86C1; color: white; border-radius: 8px; font-size: 14px; font-weight: bold; padding: 10px 20px;
+    }
+    QPushButton:hover:enabled {
+        background-color: #1F618D;
+    }
+    QPushButton:disabled {
+        background-color: #BDC3C7; color: #7F8C8D;
+    }
+"""
+
+BTN_STYLE_RED = """
+    QPushButton {
+        background-color: #E74C3C; color: white; border-radius: 8px; font-size: 14px; font-weight: bold; padding: 10px 20px;
+    }
+    QPushButton:hover:enabled {
+        background-color: #C0392B;
+    }
+    QPushButton:disabled {
+        background-color: #BDC3C7; color: #7F8C8D;
+    }
+"""
+
+BTN_STYLE_GREEN = """
+    QPushButton {
+        background-color: #27AE60; color: white; border-radius: 8px; font-size: 14px; font-weight: bold; padding: 10px 20px;
+    }
+    QPushButton:hover:enabled {
+        background-color: #1E8449;
+    }
+    QPushButton:disabled {
+        background-color: #BDC3C7; color: #7F8C8D;
+    }
+"""
 
 class TimerWidget(QWidget):
     def __init__(self, main_window=None):
@@ -109,40 +145,19 @@ class TimerWidget(QWidget):
         
         # Cast Line (Start) Button
         self.start_btn = QPushButton("Cast Line 🎣")
-        self.start_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #2E86C1; color: white; border-radius: 8px; font-size: 14px; font-weight: bold; padding: 10px 20px;
-            }
-            QPushButton:hover {
-                background-color: #1F618D;
-            }
-        """)
+        self.start_btn.setStyleSheet(BTN_STYLE_NORMAL)
         buttons_layout.addWidget(self.start_btn)
         
         # Pull in Line (Transition to break/claim fih) Button
         self.pull_btn = QPushButton("Pull in Line! 🎣💦")
         self.pull_btn.setVisible(False)  # Hidden initially
-        self.pull_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #27AE60; color: white; border-radius: 8px; font-size: 14px; font-weight: bold; padding: 10px 20px;
-            }
-            QPushButton:hover {
-                background-color: #1E8449;
-            }
-        """)
+        self.pull_btn.setStyleSheet(BTN_STYLE_GREEN)
         buttons_layout.addWidget(self.pull_btn)
         
         # Pack up gear (Cancel/Reset) Button
         self.cancel_btn = QPushButton("Pack up gear 🎒")
         self.cancel_btn.setEnabled(False)  # Disabled initially
-        self.cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #BDC3C7; color: #7F8C8D; border-radius: 8px; font-size: 14px; font-weight: bold; padding: 10px 20px;
-            }
-            QPushButton:hover:enabled {
-                background-color: #95A5A6; color: white;
-            }
-        """)
+        self.cancel_btn.setStyleSheet(BTN_STYLE_NORMAL)
         buttons_layout.addWidget(self.cancel_btn)
         
         layout.addLayout(buttons_layout)
@@ -151,7 +166,7 @@ class TimerWidget(QWidget):
         self.focus_combo.currentIndexChanged.connect(self.update_timer_display_from_settings)
         self.start_btn.clicked.connect(self.start_timer)
         self.pull_btn.clicked.connect(self.claim_fih_and_start_break)
-        self.cancel_btn.clicked.connect(self.reset_timer)
+        self.cancel_btn.clicked.connect(self.cancel_fishing)
         
     def update_timer_display_from_settings(self):
         # Update the clock display text based on the selected focus time dropdown
@@ -174,6 +189,7 @@ class TimerWidget(QWidget):
         self.start_btn.setVisible(True)
         self.pull_btn.setVisible(False)
         self.cancel_btn.setEnabled(True)
+        self.cancel_btn.setStyleSheet(BTN_STYLE_RED)
         self.status_label.setText("Waiting patiently for a fih... 🤫")
         
         # Update clock display immediately and start QTimer
@@ -185,6 +201,9 @@ class TimerWidget(QWidget):
         logger.info("--- claim_fih_and_start_break triggered ---")
         self.pull_btn.setVisible(False)
         self.start_btn.setVisible(True)
+        self.start_btn.setEnabled(False)
+        self.cancel_btn.setEnabled(False)
+        self.cancel_btn.setStyleSheet(BTN_STYLE_NORMAL)
         
         # 1. Determine total fih caught so far
         total_caught = self.db.get_total_count()
@@ -230,6 +249,18 @@ class TimerWidget(QWidget):
         self.update_clock_label()
         self.timer.start(1000)
 
+    def cancel_fishing(self):
+        # Ask for confirmation before giving up an active focus session
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle("Give up fishing?")
+        msg_box.setText("Are you sure you want to pack up your gear? You'll lose this catch!")
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+        msg_box.setStyleSheet("QLabel { color: black; } QPushButton { color: black; }")
+        reply = msg_box.exec()
+        if reply == QMessageBox.StandardButton.Yes:
+            self.reset_timer()
+
     def reset_timer(self):
         # Stop timer
         self.timer.stop()
@@ -239,8 +270,10 @@ class TimerWidget(QWidget):
         self.break_combo.setEnabled(True)
         self.start_btn.setEnabled(True)
         self.start_btn.setVisible(True)
+        self.start_btn.setStyleSheet(BTN_STYLE_NORMAL)
         self.pull_btn.setVisible(False)
         self.cancel_btn.setEnabled(False)
+        self.cancel_btn.setStyleSheet(BTN_STYLE_NORMAL)
         self.status_label.setText("Ready to fish... 🏕️")
         
         # Reset visual clock representation
@@ -276,7 +309,11 @@ class TimerWidget(QWidget):
             
             # Switch buttons: hide normal Start button, show Pull in Line!
             self.start_btn.setVisible(False)
+            self.pull_btn.setEnabled(True)
+            self.pull_btn.setStyleSheet(BTN_STYLE_GREEN)
             self.pull_btn.setVisible(True)
+            self.cancel_btn.setEnabled(False)
+            self.cancel_btn.setStyleSheet(BTN_STYLE_NORMAL)
             
             # (Here we will also generate the random fih in Step 4!)
         else:
