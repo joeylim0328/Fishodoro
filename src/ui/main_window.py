@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QSystemTrayIcon
 from PySide6.QtGui import QIcon, QAction
 from PySide6.QtCore import QCoreApplication, Qt
 from src.ui.widgets.timer_widget import TimerWidget
+from src.ui.widgets.pond_widget import PondWidget
 from src.ui.widgets.stats_widget import StatsWidget
 
 class FishodoroApp(QMainWindow):
@@ -10,7 +11,7 @@ class FishodoroApp(QMainWindow):
         
         # Configure the window
         self.setWindowTitle("Fishodoro 🐟")
-        self.resize(550, 520)  # Sized beautifully for our content panels
+        self.resize(550, 600)  # Sized beautifully for our content panels
         
         # --- Tab Widget Setup ---
         self.tabs = QTabWidget()
@@ -43,15 +44,9 @@ class FishodoroApp(QMainWindow):
         self.timer_widget = TimerWidget(self)
         self.tabs.addTab(self.timer_widget, "🎣 Fishing Deck")
         
-        # Tab 2: 🌊 My Pond (Placeholder for now)
-        self.pond_placeholder = QWidget()
-        pond_layout = QVBoxLayout()
-        self.pond_placeholder.setLayout(pond_layout)
-        pond_label = QLabel("Welcome to your virtual Pond! 🌊\nYour caught fih will swim here soon...")
-        pond_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pond_label.setStyleSheet("font-size: 16px; color: #1F618D; font-family: 'Segoe UI', Arial; font-style: italic;")
-        pond_layout.addWidget(pond_label)
-        self.tabs.addTab(self.pond_placeholder, "🌊 My Pond")
+        # Tab 2: 🌊 My Pond (Using our new PondWidget)
+        self.pond_widget = PondWidget()
+        self.tabs.addTab(self.pond_widget, "🌊 My Pond")
         
         # Tab 3: 📊 Statistics (Using our new StatsWidget)
         self.stats_widget = StatsWidget()
@@ -110,8 +105,11 @@ class FishodoroApp(QMainWindow):
             )
 
     def on_tab_changed(self, index):
+        # If the user clicks on the Pond tab (index 1), automatically refresh it
+        if index == 1:
+            self.pond_widget.refresh_pond()
         # If the user clicks on the Stats tab (index 2), automatically refresh it
-        if index == 2:
+        elif index == 2:
             self.stats_widget.refresh_stats()
 
 

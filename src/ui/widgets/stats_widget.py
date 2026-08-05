@@ -133,7 +133,6 @@ class StatsWidget(QWidget):
         unique_species = len(set(item["name"] for item in history))
         self.overview_label.setText(
             f"You have caught a total of {total_caught} fih! 🎣\n"
-            f"Discovered {unique_species} unique species in your logbook."
         )
         
         # Update Month/Year Header text
