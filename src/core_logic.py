@@ -10,12 +10,14 @@ COMMON_FIH = [
     {"emoji": "🐙", "base_name": "Takoyaki"},
     {"emoji": "🦞", "base_name": "Big Kiap Kiap"},
     {"emoji": "🐚", "base_name": "Jolly Shelly"},
+    {"emoji": "🦆", "base_name": "Lost Quack"},
     
 ]
 
 # Special Fih (Rare/Legendary Sea Life - caught on every 4th focus completion)
 SPECIAL_FIH = [
     {"emoji": "🦑", "base_name": "Le Kraken"},
+    {"emoji": "🐢", "base_name": "Tooti Tommy"},
     {"emoji": "🐋", "base_name": "Majestic Willy"},
     {"emoji": "🐬", "base_name": "Elegant Daphne"},
     {"emoji": "🦈", "base_name": "Mr Vegan Sunshine"},
