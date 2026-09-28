@@ -134,23 +134,3 @@ Do this regularly, and **always before updating or deleting the app**.
 
 Fishodoro does not install anything else on your computer.
 
----
-
-## 8. Troubleshooting
-
-| Problem | What to try |
-|---|---|
-| "Windows protected your PC" | Click **More info** → **Run anyway** |
-| The app does not open | Make sure you extracted the zip and that `_internal` is next to `Fishodoro.exe` |
-| My fih disappeared | Did you run it from inside the zip, move the `.exe` alone, or use a new download? Restore your `database.json` backup |
-| My antivirus blocks or deletes it | This is a known false alarm for apps like this. Allow Fishodoro in your antivirus settings |
-| The app will not save | Move the `Fishodoro` folder out of `C:\Program Files` into Documents or Desktop |
-| Emojis look different | Emojis use your Windows emoji font, so they can look slightly different on each computer |
-
-Still stuck? Open an issue on GitHub and attach `Fishodoro\_internal\fishodoro.log`.
-
----
-
-## Credits
-
-App icon: [Fish](https://icons8.com/icon/OClCFhCarb8m/fish) icon by [Icons8](https://icons8.com)
