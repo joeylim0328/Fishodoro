@@ -44,8 +44,10 @@ Logs print to the terminal and are also written to `fishodoro.log`.
 
 ### 4.1 Install build tools (once)
 
+PyInstaller and Pillow are included in `requirements.txt`, so they are already installed if you followed Section 1:
+
 ```powershell
-python -m pip install pyinstaller pillow
+python -m pip install -r requirements.txt
 ```
 
 ### 4.2 Back up the build's `database.json`
