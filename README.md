@@ -35,3 +35,7 @@ python main.py
 - **Pack up gear**: Stop the current session (asks for confirmation during focus).
 - **Pull in Line**: Appears when a focus session finishes; claim your fish and start the break.
 
+## Credits
+
+- App icon: <a target="_blank" href="https://icons8.com/icon/OClCFhCarb8m/fish">Fish</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+
