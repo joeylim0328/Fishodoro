@@ -1,2 +1,10 @@
 fishodoro.log
 database.json
+database_backup*.json
+
+# PyInstaller build output
+build/
+dist/
+
+# Release packaging output
+release/

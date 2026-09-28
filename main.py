@@ -21,6 +21,11 @@ logger = logging.getLogger("main")
 logger.info("Fishodoro Application Starting Up...")
 
 if __name__ == "__main__":
+    # Give Fishodoro its own taskbar identity on Windows so it shows our icon instead of Python's
+    if sys.platform == "win32":
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Fishodoro.App")
+
     app = QApplication(sys.argv)
     window = FishodoroApp()
     window.show()

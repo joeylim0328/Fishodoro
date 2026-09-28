@@ -145,13 +145,22 @@ class StatsWidget(QWidget):
             if child.widget():
                 child.widget().deleteLater()
                 
+        # Only keep the last 5 fih caught in the selected month
+        month_prefix = self.current_display_date.strftime("%Y-%m")
+        month_history = [item for item in history if item.get("focus_end_btn_pressed", "").startswith(month_prefix)]
+        recent_history = month_history[-5:]
+                
         if not history:
             no_fih_label = QLabel("Your logbook is empty. Cast some lines to catch your first fih! 🏕️")
             no_fih_label.setStyleSheet("color: #7F8C8D; font-style: italic; padding: 10px;")
             self.history_layout.addWidget(no_fih_label)
+        elif not recent_history:
+            no_fih_label = QLabel("No fih caught this month. 🏕️")
+            no_fih_label.setStyleSheet("color: #7F8C8D; font-style: italic; padding: 10px;")
+            self.history_layout.addWidget(no_fih_label)
         else:
             # Show in reverse order (most recent first)
-            for item in reversed(history):
+            for item in reversed(recent_history):
                 time_str = "Unknown"
                 if "focus_end_btn_pressed" in item:
                     try:

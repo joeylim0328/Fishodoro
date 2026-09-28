@@ -1,3 +1,4 @@
+import os
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QSystemTrayIcon, QMenu, QTabWidget, QLabel
 from PySide6.QtGui import QIcon, QAction
 from PySide6.QtCore import QCoreApplication, Qt
@@ -5,12 +6,18 @@ from src.ui.widgets.timer_widget import TimerWidget
 from src.ui.widgets.pond_widget import PondWidget
 from src.ui.widgets.stats_widget import StatsWidget
 
+# Project root (or the _internal folder in a PyInstaller build), three levels up from src/ui/
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+ICON_PATH = os.path.join(BASE_DIR, "assets", "icons8-fish-96.png")
+
 class FishodoroApp(QMainWindow):
     def __init__(self):
         super().__init__()
         
         # Configure the window
         self.setWindowTitle("Fishodoro 🐟")
+        self.app_icon = QIcon(ICON_PATH)
+        self.setWindowIcon(self.app_icon)
         self.resize(550, 600)  # Sized beautifully for our content panels
         
         # --- Tab Widget Setup ---
@@ -76,9 +83,11 @@ class FishodoroApp(QMainWindow):
         # --- System Tray Icon ---
         self.tray_icon = QSystemTrayIcon(self)
         
-        # Using a standard system icon as fallback (or we can use our emoji if we have an image, 
-        # but standard system information icon works instantly)
-        self.tray_icon.setIcon(self.style().standardIcon(self.style().StandardPixmap.SP_MessageBoxInformation))
+        # Use the Fishodoro icon, falling back to a standard system icon if the file is missing
+        if self.app_icon.isNull():
+            self.tray_icon.setIcon(self.style().standardIcon(self.style().StandardPixmap.SP_MessageBoxInformation))
+        else:
+            self.tray_icon.setIcon(self.app_icon)
         
         # Create context menu for tray icon
         tray_menu = QMenu()

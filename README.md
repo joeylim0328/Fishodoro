@@ -2,6 +2,11 @@
 
 Fishodoro is a cozy, fish-themed Pomodoro timer built with Python and PySide6. It turns focused work sessions into a gentle fishing trip: complete a focus session to "reel in" a random fish, then relax with a customizable break.
 
+## Documentation
+
+- 📘 [User Manual](user_manual.md): download, install, use the app, and back up your fih (no technical knowledge needed).
+- 🛠️ [Technical Manual](technical_manual.md): run from source, change the code, build a Windows release, and manage `database.json`.
+
 ## Features
 
 - **Focus Timer**: Choose a focus duration (15, 20, 25, or 30 minutes; default is 15).

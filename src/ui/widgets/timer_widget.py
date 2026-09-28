@@ -232,11 +232,11 @@ class TimerWidget(QWidget):
         if self.main_window:
             self.main_window.show_notification("Fih Caught! 🎣🎒", celebration_msg)
             
-        # Update status label with the caught fih for in-app gratification
-        self.status_label.setText(f"Caught: {new_fih['name']} {new_fih['emoji']}!\nNow starting break...")
-        
         # Start break mode countdown
         self.start_break()
+        
+        # Show the catch message in-app for the rest of the break
+        self.status_label.setText(f"{celebration_msg}\nTaking a sip of tea... 🍵")
 
     def start_break(self):
         # Read break minutes from settings and calculate total seconds
