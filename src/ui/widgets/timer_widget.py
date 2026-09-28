@@ -82,8 +82,8 @@ class TimerWidget(QWidget):
         focus_title = QLabel("Focus Time:")
         focus_title.setStyleSheet("font-size: 11px; color: #1F618D; font-weight: bold; text-transform: uppercase;")
         self.focus_combo = QComboBox()
-        self.focus_combo.addItems(["1 Min", "15 Min", "20 Min", "25 Min", "30 Min"])
-        self.focus_combo.setCurrentIndex(1)  # Default: 15 Min
+        self.focus_combo.addItems(["15 Min", "20 Min", "25 Min", "30 Min"])
+        self.focus_combo.setCurrentIndex(0)  # Default: 15 Min
         self.focus_combo.setStyleSheet("""
             QComboBox {
                 padding: 6px; 
@@ -114,7 +114,7 @@ class TimerWidget(QWidget):
         # Generates options 1 Min, 2 Min, ..., 20 Min
         break_options = [f"{i} Min" for i in range(1, 21)]
         self.break_combo.addItems(break_options)
-        self.break_combo.setCurrentIndex(3)  # Index 3 corresponds to "5 Min"
+        self.break_combo.setCurrentIndex(4)  # Index 4 corresponds to "5 Min"
         self.break_combo.setStyleSheet("""
             QComboBox {
                 padding: 6px; 
