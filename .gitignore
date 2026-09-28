@@ -1,6 +1,7 @@
 fishodoro.log
 database.json
 database_backup*.json
+DESIGN.md
 
 # PyInstaller build output
 build/
